@@ -1,10 +1,8 @@
 name: Build and deploy a container to an Azure Web App
 
 env:
-  AZURE_WEBAPP_NAME: wa-chatbot-897598   # set this to your application's name
-  GOV_CHAT_WEBAPP_NAME: coeart-govchat01   # set this to your application's name
-  GOV_SIMP_WEBAPP_NAME: coeart-govchat-simple-02   # set this to your application's name
-
+  AZURE_WEBAPP_NAME: uspscio-casi-chatgpt   # set this to your application's name
+  
 on:
   push:
     branches:
@@ -22,40 +20,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: make env file
-        run: |
-            echo "$MY_SECRET" >> .env
-        shell: bash
-        env:
-          MY_SECRET: ${{ secrets.ENV_DEPLOY }}
-
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       
-      
-      - name: Log in to GitHub container registry FFL
+      - name: Log in to USPS container registry
         uses: docker/login-action@v2
         with:
-          registry: crchatuiffl509559085.azurecr.io
+          registry: casidevopenaicr001.azurecr.io
           username: ${{ secrets.CONTAINER_USERNAME }}
           password: ${{ secrets.CONTAINER_PASSWORD }}
-
-      - name: Log in to GitHub container registry Gov Chat
-        uses: docker/login-action@v2
-        with:
-          registry: crartgovchat01.azurecr.io
-          username: ${{ secrets.GOV_CHAT_CONTAINER_USERNAME }}
-          password: ${{ secrets.GOV_CHAT_CONTAINER_PASSWORD }}
-
-      
-      - name: Log in to GitHub container registry Gov Chat Simple
-        uses: docker/login-action@v2
-        with:
-          registry: crgovchatsimp01.azurecr.io
-          username: ${{ secrets.GOV_SIMP_CONTAINER_USERNAME }}
-          password: ${{ secrets.GOV_SIMP_CONTAINER_PASSWORD }}
-
 
       - name: Build and push container image to registry
         uses: docker/build-push-action@v4
@@ -63,11 +36,9 @@ jobs:
           push: true
           file: ./Dockerfile
           tags: |
-            crchatuiffl509559085.azurecr.io/chat:${{ github.sha }}
-            crartgovchat01.azurecr.io/chat:${{ github.sha }}
-            crgovchatsimp01.azurecr.io/chat:${{ github.sha }}
+            casidevopenaicr001.azurecr.io/chat:${{ github.sha }}
 
-  deploy-ffl:
+  deploy-casi-dev-openai-gen-rg-001:
     runs-on: ubuntu-latest
 
     needs: build
@@ -91,56 +62,4 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          images: 'crchatuiffl509559085.azurecr.io/chat:${{ github.sha }}'
-
-  deploy-gov-chat:
-    runs-on: ubuntu-latest
-
-    needs: build
-
-    environment:
-      name: 'production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_GOV_CHAT_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_ART_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_ART_SUBSCRIPTION_ID }}
-      - name: Lowercase the repo name
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.GOV_CHAT_WEBAPP_NAME }}
-          images: 'crartgovchat01.azurecr.io/chat:${{ github.sha }}'
-
-  deploy-gov-chat-simp:
-    runs-on: ubuntu-latest
-
-    needs: build
-
-    environment:
-      name: 'production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_GOV_SIMP_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_ART_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_ART_SUBSCRIPTION_ID }}
-      - name: Lowercase the repo name
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.GOV_SIMP_WEBAPP_NAME }}
-          images: 'crgovchatsimp01.azurecr.io/chat:${{ github.sha }}'
+          images: 'casidevopenaicr001.azurecr.io/chat:${{ github.sha }}'
