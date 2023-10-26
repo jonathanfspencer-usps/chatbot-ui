@@ -18,6 +18,9 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     console.log("load the models: " + url) ;
+    console.log("model headers");
+    console.log(req.headers);
+
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',

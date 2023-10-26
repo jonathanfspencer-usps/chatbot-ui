@@ -30,50 +30,60 @@ export const OpenAIStream = async (
   key: string,
   messages: Message[],
   principalName: string|null,
-  bearer: string|null
+  bearer: string|null,
+  bearerAuth: string|null
 ) => {
   let url = `${OPENAI_API_HOST}/v1/chat/completions`;
   if (OPENAI_API_TYPE === 'azure') {
     url = `${OPENAI_API_HOST}/openai/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`;
     console.log(url);
   }
-  const res = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(OPENAI_API_TYPE === 'openai' && {
-        Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
-      }),
-      ...(OPENAI_API_TYPE === 'azure' && {
-        'api-key': `${key ? key : process.env.OPENAI_API_KEY}`
-      }),
-      ...((OPENAI_API_TYPE === 'openai' && OPENAI_ORGANIZATION) && {
-        'OpenAI-Organization': OPENAI_ORGANIZATION,
-      }),
-      ...((AZURE_APIM) && {
-        'Ocp-Apim-Subscription-Key': process.env.AZURE_APIM_KEY
-      }),
-      ...((principalName) && {
-        'x-ms-client-principal-name': principalName
-      }),
-      ...((bearer) && { 
-        'Authorization': 'Bearer ' + bearer
-      })
-    },
-    method: 'POST',
-    body: JSON.stringify({
-      ...(OPENAI_API_TYPE === 'openai' && {model: model.id}),
-      messages: [
-        {
-          role: 'system',
-          content: systemPrompt,
-        },
-        ...messages,
-      ],
-      max_tokens: 1000,
-      temperature: temperature,
-      stream: true,
+  const header = {
+    'Content-Type': 'application/json',
+    ...(OPENAI_API_TYPE === 'openai' && {
+      Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
     }),
+    ...(OPENAI_API_TYPE === 'azure' && {
+      'api-key': `${key ? key : process.env.OPENAI_API_KEY}`
+    }),
+    ...((OPENAI_API_TYPE === 'openai' && OPENAI_ORGANIZATION) && {
+      'OpenAI-Organization': OPENAI_ORGANIZATION,
+    }),
+    ...((AZURE_APIM) && {
+      'Ocp-Apim-Subscription-Key': process.env.AZURE_APIM_KEY
+    }),
+    ...((principalName) && {
+      'x-ms-client-principal-name': principalName
+    }),
+    ...((bearer) && { 
+      'x-ms-client-principal': bearer
+    }),
+    ...((bearerAuth) && { 
+      'x-ms-client-principal-id': bearerAuth
+    })
+  };
+  const body = {
+    ...(OPENAI_API_TYPE === 'openai' && {model: model.id}),
+    messages: [
+      {
+        role: 'system',
+        content: systemPrompt,
+      },
+      ...messages,
+    ],
+    max_tokens: 1000,
+    temperature: temperature,
+    stream: true,
+  };
+  const res = await fetch(url, {
+    headers: header,
+    method: 'POST',
+    body: JSON.stringify(body),
   });
+
+  console.log("!!!Sending to APIM!!!")
+  console.log(JSON.stringify(header));
+  //console.log(JSON.stringify(body));
 
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
