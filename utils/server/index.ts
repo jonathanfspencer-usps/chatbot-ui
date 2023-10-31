@@ -81,8 +81,7 @@ export const OpenAIStream = async (
     body: JSON.stringify(body),
   });
 
-  console.log("!!!Sending to APIM!!!")
-  console.log(JSON.stringify(header));
+  //console.log("!!!Sending to APIM!!!")
   //console.log(JSON.stringify(body));
 
   const encoder = new TextEncoder();
@@ -110,25 +109,27 @@ export const OpenAIStream = async (
     }
   }
 
-  console.debug("got Chat");
+  console.debug("got Chat");  
   const stream = new ReadableStream({
     async start(controller) {
       const onParse = (event: ParsedEvent | ReconnectInterval) => {
         if (event.type === 'event') {
           const data = event.data;
 
-          try {
-            const json = JSON.parse(data);
-            if (json.choices[0].finish_reason != null) {
-              controller.close();
-              return;
+          if(data !== "[DONE]"){
+            try {
+              const json = JSON.parse(data);
+              if (json.choices[0].finish_reason != null) {
+                controller.close();
+                return;
+              }
+              const text = json.choices[0].delta.content;
+              const queue = encoder.encode(text);
+              controller.enqueue(queue);
+            } catch (e) {
+              controller.error(e + " Data: " + data);              
             }
-            const text = json.choices[0].delta.content;
-            const queue = encoder.encode(text);
-            controller.enqueue(queue);
-          } catch (e) {
-            controller.error(e);
-          }
+        }
         }
       };
 
