@@ -360,8 +360,8 @@ const Home = ({
       }}
     >
       <Head>
-        <title>Gov Chat</title>
-        <meta name="description" content="ChatGPT but better." />
+        <title>USPS AzureChat</title>
+        <meta name="description" content="USPS-Approved Generative AI." />
         <meta
           name="viewport"
           content="height=device-height ,width=device-width, initial-scale=1, user-scalable=no"

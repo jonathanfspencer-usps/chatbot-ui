@@ -4,7 +4,7 @@
   "Stop Generating": "Durdur",
   "Prompt limit is {{maxLength}} characters": "Prompt sınırı {{maxLength}} karakterdir",
   "System Prompt": "Sistem Prompt",
-  "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.": "Sen Gov Chat'sin, OpenAI tarafından eğitilmiş büyük bir dil modelisin. Kullanıcının talimatlarını dikkatlice takip et. Yanıtını markdown kullanarak ver.",
+  "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.": "Sen USPS AzureChat'sin, OpenAI tarafından eğitilmiş büyük bir dil modelisin. Kullanıcının talimatlarını dikkatlice takip et. Yanıtını markdown kullanarak ver.",
   "Enter a prompt": "Bir prompt girin",
   "Regenerate response": "Yanıtı Yeniden Oluştur",
   "Sorry, there was an error.": "Üzgünüm, bir hata oluştu.",
@@ -23,6 +23,6 @@
   "click if using a .env.local file": "Eğer .env.local dosyası kullanıyorsanız tıklayın",
   "Message limit is {{maxLength}} characters. You have entered {{valueLength}} characters.": "Mesaj sınırı {{maxLength}} karakterdir. {{valueLength}} karakter girdiniz.",
   "Please enter a message": "Lütfen bir mesaj girin",
-  "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality.": "Gov Chat, ChatGPT'nin arayüz ve işlevselliğini taklit etmeyi amaçlayan OpenAI'in sohbet modelleri için gelişmiş bir sohbetbot kitidir.",
+  "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality.": "USPS AzureChat, ChatGPT'nin arayüz ve işlevselliğini taklit etmeyi amaçlayan OpenAI'in sohbet modelleri için gelişmiş bir sohbetbot kitidir.",
   "Are you sure you want to clear all messages?": "Tüm mesajları temizlemek istediğinize emin misiniz?"
 }
